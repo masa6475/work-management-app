@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="navbar">
+    <div class="navbar-inner">
+        <div>業務管理アプリ</div>
+        <div>
+            <span>{{ current_user.full_name }}さん</span>
+            <a href="/dashboard">ダッシュボード</a>
+            <a href="/records/new">新規登録</a>
+            <a href="/logout">ログアウト</a>
+        </div>
+    </div>
+</nav>
+
+<div class="form-wrap">
+    <h2>業務記録を追加</h2>
+
+    {% if error %}
+    <div class="flash-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="/records/new">
+        <div class="filter-grid">
+            <div>
+                <label for="record_date">日時</label>
+                <input type="datetime-local" id="record_date" name="record_date" required>
+            </div>
+            <div>
+                <label for="customer_name">顧客名</label>
+                <input type="text" id="customer_name" name="customer_name" required>
+            </div>
+            <div>
+                <label for="work_type">作業種別</label>
+                <input type="text" id="work_type" name="work_type" value="一般">
+            </div>
+            <div>
+                <label for="duration_minutes">作業時間（分）</label>
+                <input type="number" id="duration_minutes" name="duration_minutes" min="0" value="0" required>
+            </div>
+            <div>
+                <label for="status">ステータス</label>
+                <select id="status" name="status">
+                    <option value="未対応">未対応</option>
+                    <option value="対応中">対応中</option>
+                    <option value="完了">完了</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <label for="work_content">作業内容</label>
+            <textarea id="work_content" name="work_content" required></textarea>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <label for="note">備考</label>
+            <textarea id="note" name="note"></textarea>
+        </div>
+
+        <div class="inline-actions">
+            <button type="submit">保存</button>
+            <a href="/dashboard" class="button secondary">キャンセル</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="navbar">
+    <div class="navbar-inner">
+        <div>業務管理アプリ</div>
+        <div>
+            <span>{{ current_user.full_name }}さん</span>
+            <a href="/dashboard">ダッシュボード</a>
+            <a href="/records/new">新規登録</a>
+            <a href="/logout">ログアウト</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>業務ダッシュボード</h1>
+
+    <div class="card-grid">
+        <div class="stat-card">
+            <span class="label">総件数</span>
+            <span class="value">{{ total_records }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="label">総勤務時間</span>
+            <span class="value">{{ total_minutes }}分</span>
+        </div>
+        <div class="stat-card">
+            <span class="label">完了件数</span>
+            <span class="value">{{ completed_records }}</span>
+        </div>
+    </div>
+
+    <form class="filter-form" method="get" action="/dashboard">
+        <div class="filter-grid">
+            <div>
+                <label for="customer_name">顧客名</label>
+                <input type="text" id="customer_name" name="customer_name" value="{{ customer_name }}">
+            </div>
+            <div>
+                <label for="start_date">開始日</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
+            <div>
+                <label for="end_date">終了日</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
+            <div>
+                <label for="status">ステータス</label>
+                <select id="status" name="status">
+                    <option value="">すべて</option>
+                    <option value="未対応" {% if status == '未対応' %}selected{% endif %}>未対応</option>
+                    <option value="対応中" {% if status == '対応中' %}selected{% endif %}>対応中</option>
+                    <option value="完了" {% if status == '完了' %}selected{% endif %}>完了</option>
+                </select>
+            </div>
+        </div>
+        <div class="inline-actions">
+            <button type="submit">検索</button>
+            <a href="/dashboard" class="button secondary">リセット</a>
+        </div>
+    </form>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>日時</th>
+                    <th>顧客名</th>
+                    <th>作業内容</th>
+                    <th>種別</th>
+                    <th>時間</th>
+                    <th>ステータス</th>
+                    <th>備考</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.record_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ record.customer_name }}</td>
+                    <td>{{ record.work_content }}</td>
+                    <td>{{ record.work_type }}</td>
+                    <td>{{ record.duration_minutes }}分</td>
+                    <td>
+                        {% if record.status == '完了' %}
+                        <span class="badge success">{{ record.status }}</span>
+                        {% else %}
+                        <span class="badge pending">{{ record.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ record.note or '-' }}</td>
+                    <td>
+                        <form method="post" action="/records/{{ record.id }}/delete">
+                            <button type="submit" class="secondary">削除</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8">記録はまだありません。</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
