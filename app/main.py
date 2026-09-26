@@ -1,7 +1,7 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
-from fastapi import Request
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.database import init_db
@@ -19,8 +19,5 @@ init_db()
 
 
 @app.get("/")
-async def home(request: Request):
-    token = request.cookies.get("access_token")
-    if token:
-        return RedirectResponse(url="/dashboard", status_code=303)
-    return RedirectResponse(url="/login", status_code=303)
+async def home():
+    return {"message": "業務管理アプリへようこそ。/login からご利用ください。"}
